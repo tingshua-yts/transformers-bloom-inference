@@ -1,0 +1,1 @@
+deepspeed --num_gpus 2 deepspeed_bloom_7b.py

@@ -16,17 +16,26 @@ from ..constants import DS_INFERENCE, DS_ZERO, HF_ACCELERATE, HF_CPU
 
 
 # used for benchmarks
-dummy_input_sentences = [
-    "DeepSpeed is a machine learning framework",
-    "He is working on",
-    "He has a",
-    "He got all",
-    "Everyone is happy and I can",
-    "The new movie that got Oscar this year",
-    "In the far far distance from our galaxy,",
-    "Peace is the only way",
-]
+# dummy_input_sentences = [
+#     "DeepSpeed is a machine learning framework",
+#     "He is working on",
+#     "He has a",
+#     "He got all",
+#     "Everyone is happy and I can",
+#     "The new movie that got Oscar this year",
+#     "In the far far distance from our galaxy,",
+#     "Peace is the only way",
+# ]
 
+# dummy_input_sentences = [
+#      "He is working on",
+#     "He has a",
+# ]
+
+dummy_input_sentences = [
+    "There have indeed been few consequences for the Trump lawyers and supporters who spouted falsehoods and nonsense about a fair election in 2020 that the ex-president lost, although some key figures and other right-wing networks face their own pending defamation suits from Dominion. Smartmatic, another voting technology company, is also suing Fox News for defamation in a case that’s pending. And Trump himself",
+    "There have indeed been few consequences for the Trump lawyers and supporters who spouted falsehoods and nonsense about a fair election in 2020 that the ex-president lost, although some key figures and other right-wing networks face their own pending defamation suits from Dominion. Smartmatic, another voting technology company, is also suing Fox News for defamation in a case that’s pending. And Trump himself",
+]
 
 def get_argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
@@ -97,7 +106,8 @@ def run_rank_n(func: Callable, rank: int = 0, barrier: bool = False) -> None:
 
 @run_rank_n
 def print_rank_0(*args, **kwargs) -> None:
-    print(*args, **kwargs)
+    if dist.get_rank() == 0:
+        print(*args, **kwargs)
 
 
 def get_torch_dtype(dtype_str: str) -> torch.dtype:
@@ -131,6 +141,14 @@ def get_dummy_batch(batch_size: int, input_sentences: List[str] = None) -> List[
     input_sentences = input_sentences[:batch_size]
 
     return input_sentences
+
+def get_dummy_input_max_len():
+    max_length  = 0
+    for sent in dummy_input_sentences:
+        length = len(sent.split(" "))
+        if length > max_length:
+            max_length = length
+    return max_length
 
 
 def get_num_tokens_to_generate(max_new_tokens: int, allowed_max_new_tokens: int) -> int:

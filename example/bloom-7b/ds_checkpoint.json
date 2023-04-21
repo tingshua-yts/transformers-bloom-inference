@@ -1,0 +1,8 @@
+{
+    "type": "BLOOM",
+      "version": 1.0,
+      "checkpoints": [
+          "/mnt/model/bloom-7b1/pytorch_model-00001-of-00002.bin",
+          "/mnt/model/bloom-7b1/pytorch_model-00002-of-00002.bin"
+      ]
+  }

@@ -23,4 +23,5 @@ from .utils import (
     print_rank_0,
     run_and_log_time,
     run_rank_n,
+    get_dummy_input_max_len,
 )
