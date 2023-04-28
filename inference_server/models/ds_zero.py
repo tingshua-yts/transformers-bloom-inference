@@ -5,7 +5,8 @@ import torch
 import deepspeed
 from transformers import AutoConfig
 from transformers.deepspeed import HfDeepSpeedConfig
-
+import logging
+logging.basicConfig(format='[%(asctime)s] %(filename)s %(funcName)s():%(lineno)i [%(levelname)s] %(message)s', level=logging.DEBUG)
 from ..utils import get_world_size
 from .model import Model, get_hf_model_class
 
@@ -30,16 +31,16 @@ class DSZeROModel(Model):
             },
             "zero_optimization": {
                 "stage": 3,
-                "overlap_comm": True,
-                "contiguous_gradients": True,
-                "reduce_bucket_size": config.hidden_size * config.hidden_size,
-                "stage3_prefetch_bucket_size": 0.9 * config.hidden_size * config.hidden_size,
-                "stage3_param_persistence_threshold": 0,
+                # "overlap_comm": True,
+                # "contiguous_gradients": True,
+                # "reduce_bucket_size": config.hidden_size * config.hidden_size,
+                # "stage3_prefetch_bucket_size": 0.9 * config.hidden_size * config.hidden_size,
+                # "stage3_param_persistence_threshold": 0,
             },
-            "steps_per_print": 2000,
+            # "steps_per_print": 2000,
             "train_batch_size": train_batch_size,
-            "train_micro_batch_size_per_gpu": train_micro_batch_size_per_gpu,
-            "wall_clock_breakdown": False,
+            # "train_micro_batch_size_per_gpu": train_micro_batch_size_per_gpu,
+            # "wall_clock_breakdown": False,
         }
 
         if args.cpu_offload:
@@ -48,6 +49,7 @@ class DSZeROModel(Model):
         # this tells from_pretrained to instantiate directly on gpus
         dschf = HfDeepSpeedConfig(ds_config)
 
+        # 这里为什么没有使用meta机制
         self.model = get_hf_model_class(args.model_class).from_pretrained(args.model_name, torch_dtype=args.dtype)
         self.model = self.model.eval()
 

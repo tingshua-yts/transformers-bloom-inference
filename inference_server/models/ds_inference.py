@@ -29,10 +29,21 @@ class DSInferenceModel(Model):
 
         with deepspeed.OnDevice(dtype=torch.float16, device="meta"):
             self.model = get_hf_model_class(args.model_class).from_config(
-                AutoConfig.from_pretrained(args.model_name), torch_dtype=torch.bfloat16
+                AutoConfig.from_pretrained(args.model_name), torch_dtype=args.dtype
             )
         self.model = self.model.eval()
+        deepspeed_config = {
+            "zero": {
+                "stage": 3,
+                "offload_optimizer": {
+                    "device": "cpu"
+                },
+                "offload_param": {
+                    "device": "cpu"
+                },
+            }
 
+        }
         downloaded_model_path = get_model_path(args.model_name)
         if args.dtype in [torch.float16, torch.int8]:
             # We currently support the weights provided by microsoft (which are
@@ -43,6 +54,7 @@ class DSInferenceModel(Model):
             if os.path.isfile(checkpoints_json):
                 self.model = deepspeed.init_inference(
                     self.model,
+                    config = deepspeed_config if args.use_zero else None,
                     mp_size=get_world_size(),
                     base_dir=downloaded_model_path,
                     dtype=args.dtype,
@@ -57,6 +69,7 @@ class DSInferenceModel(Model):
                     logging.info(f"checkpoints_json: {checkpoints_json}")
                     self.model = deepspeed.init_inference(
                         self.model,
+                        config = deepspeed_config if args.use_zero else None,
                         mp_size=get_world_size(),
                         base_dir=downloaded_model_path,
                         dtype=args.dtype,

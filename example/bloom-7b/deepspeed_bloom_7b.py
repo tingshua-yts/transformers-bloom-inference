@@ -31,6 +31,8 @@ model = deepspeed.init_inference(
     replace_with_kernel_inject=True
 )
 
+import time
+time.sleep(3600)
 # tokenize
 encoded_inputs = tokenizer("deepspeed is", padding=True, return_tensors='pt')
 

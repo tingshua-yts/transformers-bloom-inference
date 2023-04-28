@@ -819,6 +819,7 @@ def _replace_module(model, policies, layer_id=0):
                                                            policies[child.__class__][-1],
                                                            layer_id)
             setattr(model, name, replaced_module)
+            logging.info(f"name: {name}, replaced_module: {replaced_module}")
             if isinstance(model, PipelineModule):
                 assert hasattr(model, 'forward_funcs'),\
                     "we require pipe-module to have the list of fwd_functions"

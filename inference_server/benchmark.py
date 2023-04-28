@@ -110,6 +110,7 @@ def get_args() -> argparse.Namespace:
     group.add_argument("--local_rank", required=False, type=int, help="used by dist launchers")
     group.add_argument("--batch_size", default=1, type=str, help="batch size")
     group.add_argument("--cpu_offload", action="store_true", help="whether to activate CPU offload for DS ZeRO")
+    group.add_argument("--use_zero", action="store_true", help="whether to use DS Zero")
 
     args = parse_args(parser)
 

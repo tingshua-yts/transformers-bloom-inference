@@ -1,1 +1,1 @@
-deepspeed --num_gpus 2 deepspeed_bloom_7b.py
+deepspeed --num_gpus 4 deepspeed_bloom_7b.py
