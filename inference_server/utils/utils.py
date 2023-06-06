@@ -106,7 +106,7 @@ def run_rank_n(func: Callable, rank: int = 0, barrier: bool = False) -> None:
 
 @run_rank_n
 def print_rank_0(*args, **kwargs) -> None:
-    if dist.get_rank() == 0:
+    if not dist.is_initialized()  or dist.get_rank() == 0:
         print(*args, **kwargs)
 
 

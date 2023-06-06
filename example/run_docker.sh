@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 name=huggingface
-image=huggingface/transformers-pytorch-deepspeed-latest-gpu:latest
+image=ai-studio-registry-vpc.cn-beijing.cr.aliyuncs.com/tingshuai.yts/transformers-pytorch-deepspeed-latest-gpu
 flag=$(sudo docker ps  | grep "$name" | wc -l)
 if [ $flag == 0 ]
 then

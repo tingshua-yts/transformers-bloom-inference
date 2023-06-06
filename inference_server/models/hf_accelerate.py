@@ -1,10 +1,10 @@
 from argparse import Namespace
 
 import torch
-
+import logging
 from ..utils import get_world_size
 from .model import Model, get_hf_model_class
-
+logging.basicConfig(format='[%(asctime)s] %(filename)s %(funcName)s():%(lineno)i [%(levelname)s] %(message)s', level=logging.DEBUG)
 
 class HFAccelerateModel(Model):
     def __init__(self, args: Namespace) -> None:
@@ -16,6 +16,7 @@ class HFAccelerateModel(Model):
             kwargs["device_map"] = "balanced_low_0"
 
         if args.dtype == torch.int8:
+            logging.info("use in8 for accelerate inference")
             # using LLM.int8()
             kwargs["load_in_8bit"] = True
         else:

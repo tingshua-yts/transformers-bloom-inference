@@ -51,9 +51,11 @@ Model loading time + generation time per batch = {initialization_time + latency:
 
 def benchmark_end_to_end(args: argparse.Namespace):
     model, initialization_time = run_and_log_time(partial(ModelDeployment, args=args, grpc_allowed=False))
+    import time
+    time.sleep(3600)
     batch_size_list = args.batch_size.split(",")
     for batch_size in batch_size_list:
-        if dist.get_rank() == 0:
+        if not dist.is_initialized() or dist.get_rank() == 0:
             print(f"\n\n\n>>>>>>>>>>>>>>>>benchmark for batch_size:{batch_size}")
         benchmark_end_to_end_per_batch_size(args, int(batch_size), model, initialization_time)
 
